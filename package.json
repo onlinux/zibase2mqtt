@@ -1,0 +1,35 @@
+{
+  "name": "zibase2mqtt",
+  "version": "0.0.1",
+  "description": "A gateway from zibase 2 mqtt broker",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onlinux/Zibase2mqtt"
+  },
+  "homepage": "http://blog.onlinux.fr/acceder-au-suivi-dactivite-zibase-avec-node-js/",
+  "keywords": [
+    "homeassistant",
+    "hass",
+    "automation",
+    "sensor",
+    "raspberrypi",
+    "zibase",
+    "mqtt"
+  ],
+  "main": "zibase2mqtt.js",
+  "module": "zibase2mqtt.js",
+  "license": "MIT",
+  "dependencies": {
+    "moment": "^2.29.4",
+    "mqtt": "^4.3.7",
+    "request": "2.42.0",
+    "string": "3.3.3",
+    "underscore": "^1.13.6",
+    "winston": "^2.3.1"
+  }, 
+  "scripts": {
+    "start": "node zibase2mqtt.js",
+  },
+  "author": "Eric Vandecasteele <eric@onlinux.fr>",
+  "date": "20190220"
+}
