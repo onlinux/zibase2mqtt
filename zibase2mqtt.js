@@ -10,11 +10,14 @@ const os = require("os");
 const hostname = os.hostname();
 const mqtt = require('mqtt');
 const _ = require('underscore');
-const request = require("request");
+//const request = require("request");
+const request = require('request-promise');
 const S = require('string');
 const config = require('./config')
 const winston = require('winston');
 const fs = require('fs');
+const requestQueue = []; // Queue to store received requests
+let isProcessing = false; // Flag to track whether requests are being processed
 const env = process.env.NODE_ENV || config.env;
 const logDir = '.';
 if (!fs.existsSync(logDir)) {
@@ -29,7 +32,7 @@ const logger = new (winston.Logger)({
         new (winston.transports.Console)({
             timestamp: tsFormat,
             colorize: true,
-            level: 'debug'
+            level: env === 'development' ? 'debug' : 'info'
         }),
         new (winston.transports.File)({
             filename: logDir + '/' + config.logfilename,
@@ -80,6 +83,7 @@ request(config.url, function (err, resp, body) {
 });
 
 const dgram = require('dgram');
+const { log } = require("console");
 const server = dgram.createSocket("udp4");
 const client = dgram.createSocket("udp4");
 const b = new Buffer.alloc(70);
@@ -175,14 +179,38 @@ mqttclient.on('message', (topic, payload) => {
         if (cmd == 'DIM') // If 'My' button press then set level to 50 
             level = '50'
     }
-    url = `http://${zibaseIp}/cgi-bin/domo.cgi?cmd=${cmd}%20${device}%20${protocol}%20${level}`
-    logger.debug(url)
-    request(url, function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-            logger.error(body)
-        }
-    })
+    // On passe par une requestQueue afin de laisser un délai d'au moins 1 seconde
+    // entre chaque request vers la zibase, sinon les requests suivant le 1er ne sont pas 
+    // pris en compte. 
+    const url = `http://${zibaseIp}/cgi-bin/domo.cgi?cmd=${cmd}%20${device}%20${protocol}%20${level}`
+    requestQueue.push(url);
+    // Process the request queue with a one-second delay
+    if (!isProcessing) {
+        processRequestQueue();
+    }
 })
+
+async function processRequestQueue() {
+    if (requestQueue.length > 0) {
+        isProcessing = true; // Set the flag to indicate processing
+
+        const url = requestQueue.shift();
+
+        try {
+            const response = await request(url);
+            logger.error(`Response from ${url}: ${response}`);
+        } catch (error) {
+            //logger.error(`Error for ${url}: ${error.message}`);
+        }
+
+        // Wait for x second before processing the next request
+        setTimeout(() => {
+            isProcessing = false; // Reset the processing flag
+            logger.debug("Processing next url", requestQueue)
+            processRequestQueue(); // Continue processing the queue
+        }, 1000);
+    }
+}
 
 function publish_hass(id, msg) {
     if (mqttclient.connected == true) {

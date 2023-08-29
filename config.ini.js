@@ -5,7 +5,7 @@ config.platform = 'localhost';
 config.zibase = 'ZiBASE0059b5'; // <- Enter Main Identifier
 config.token = 'xxxxxxx'; // <- Enter Token
 config.url = 'http://' + config.platform + '/cgi-bin/decodetab?token=' + config.token;
-config.debug = false;
+config.debug = true;
 config.env = 'development';
 config.logfilename = 'zibase2mqtt.log';
 config.mqtt_ip = '192.168.0.XX';
