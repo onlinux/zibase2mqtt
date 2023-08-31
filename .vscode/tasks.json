@@ -69,8 +69,19 @@
 			},
 			"args": [
 				"-c",
-				"sudo killall hass; sudo kill $(ps au | grep 'node.*rollup' | grep -v grep | awk {'print $2'}); exit 0;",
+				"sudo killall hass; sudo kill $(ps au | grep 'node.*rollup' | grep -v grep | awk {'print $2'}); exit 0;"
 			]
+		},
+		{
+			"type": "npm",
+			"script": "install",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": [],
+			"label": "npm: install",
+			"detail": "install dependencies from package"
 		}
 	]
 }

@@ -5,7 +5,7 @@ ENV NODE_ENV=production
 
 WORKDIR /app
 COPY . .
-# Get ride of useless files ans directories
+# Get ride of useless files and directories
 RUN rm -rf ./node_modules ./.vscode ./.babelrc
 RUN rm *.log
 RUN rm test.js
