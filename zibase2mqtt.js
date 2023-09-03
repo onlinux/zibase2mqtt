@@ -13,6 +13,7 @@ const S = require("string");
 const config = require("./config");
 const winston = require("winston");
 const fs = require("fs");
+const moment = require("moment");
 const requestQueue = []; // Queue to store received requests
 let isProcessing = false; // Flag to track whether requests are being processed
 const env = process.env.NODE_ENV || config.env;
@@ -41,7 +42,6 @@ const logger = new winston.Logger({
 });
 var clientIp = process.env.MYIP || getIPAddress();
 var zibaseIp;
-var moment = require("moment");
 var home;
 var probes = [];
 var actuators = [];
@@ -49,7 +49,7 @@ var sensors = [];
 var scenarios = [];
 var cameras = [];
 var variables = [];
-var debug = config.debug || false;
+const debug = config.debug || false;
 
 // MQTT options
 const options = config.mqtt_options;
@@ -238,7 +238,7 @@ function processMessage(msg, rinfo) {
   var date = moment();
   msg = msg.slice(70);
   msg = msg.toString();
-  //logger.debug(msg);
+  
   logger.debug(msg.replace(/<(?:.|\n)*?>/gm, "")); // delete all html tags
   if (S(msg).contains("SCENARIO")) {
     var id = msg.replace(/\w* SCENARIO: (\d*)(.*)/, "$1");
@@ -247,7 +247,7 @@ function processMessage(msg, rinfo) {
       logger.info(msg);
     }
   } else if (S(msg).contains("Sent radio ID")) {
-    // Received a message sent by the zibase to a device
+    // Received a message sent by zibase to a device
     var brightness;
     var state;
     var position;
@@ -338,7 +338,7 @@ function processMessage(msg, rinfo) {
               value = parseInt(value);
             }
           } else {
-            value = `"${value}"`; //cannot convert to int or float then add double quotes
+            value = `"${value}"`; // cannot convert to int or float then add double quotes
           }
           str_hass += `,"${tag}":${value}`;
         }

@@ -12,8 +12,6 @@ config.mqtt_ip = '192.168.0.XX';
 config.mqtt_topic_hass = 'zibase2mqtt';
 config.mqtt_options = {
     keepalive: 60,
-    username: 'user',
-    password: 'password',
     port: 1883,
     clean: true,
     connectTimeout: 4000,

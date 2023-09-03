@@ -22,6 +22,7 @@
   "dependencies": {
     "moment": "^2.29.4",
     "mqtt": "^4.3.7",
+    "request": "^2.88.2",
     "request-promise": "^4.2.6",
     "string": "3.3.3",
     "underscore": "^1.13.6",

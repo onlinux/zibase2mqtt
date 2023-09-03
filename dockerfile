@@ -13,5 +13,4 @@ RUN rm config.ini.js
 
 RUN npm install
 
-
 CMD [ "sh", "-c", "node zibase2mqtt.js" ]
